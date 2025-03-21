@@ -4,7 +4,8 @@ import {
   StatusBar,
   StyleSheet,
   TextInput,
-  Pressable
+  Pressable,
+  Alert
 } from "react-native";
 import React, { useRef, useState } from "react";
 import ScreenWrapper from "@/components/ScreenWrapper";
@@ -14,6 +15,7 @@ import { theme } from "@/constants/theme";
 import Input from "@/components/Input";
 import { Icon } from "@/assets/icons";
 import Button from "@/components/Button";
+import { router } from "expo-router";
 
 type Props = {};
 
@@ -22,7 +24,12 @@ const login = (props: Props) => {
   const passwordRef = useRef("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {};
+  const handleLogin = () => {
+    if (!emailRef.current || !passwordRef.current) {
+      Alert.alert("Login", "please fill all details");
+      return;
+    }
+  };
 
   return (
     <ScreenWrapper bg={"white"}>
@@ -72,7 +79,7 @@ const login = (props: Props) => {
         <View style={styles.footer}>
           <Text style={styles.footerText}>Don't have an account?</Text>
 
-          <Pressable style={{}}>
+          <Pressable style={{}} onPress={() => router.push("/signUp")}>
             <Text
               style={[
                 styles.footerText,
