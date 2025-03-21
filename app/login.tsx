@@ -1,13 +1,18 @@
 import { View, Text, StatusBar, StyleSheet, TextInput } from "react-native";
-import React from "react";
+import React, { useRef, useState } from "react";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import BackButton from "@/components/BackButton";
 import { hp, wp } from "@/helpers/common";
 import { theme } from "@/constants/theme";
+import Input from "@/components/Input";
+import { Icon } from "@/assets/icons";
 
 type Props = {};
 
 const login = (props: Props) => {
+  const emailRef = useRef("");
+  const passwordRef = useRef("");
+  const [loading, setLoading] = useState(false);
   return (
     <ScreenWrapper bg={"white"}>
       <StatusBar barStyle={"dark-content"} />
@@ -31,6 +36,18 @@ const login = (props: Props) => {
           >
             Please login to continue
           </Text>
+
+          <Input
+            icon={<Icon name={"mail"} size={26} strokeWidth={1.6} />}
+            placeholder={"Enter your email"}
+            onChangeText={() => {}}
+          />
+          <Input
+            icon={<Icon name={"lock"} size={26} strokeWidth={1.6} />}
+            placeholder={"Enter your password"}
+            onChangeText={() => {}}
+            secureTextEntry
+          />
         </View>
       </View>
     </ScreenWrapper>
