@@ -3,6 +3,7 @@ import React from "react";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import { hp, wp } from "@/helpers/common";
 import { theme } from "@/constants/theme";
+import Button from "@/components/Button";
 
 type Props = {};
 
@@ -23,6 +24,19 @@ const Welcome = (props: Props) => {
           <Text style={styles.punchLine}>
             Where every thought finds a home and every story made
           </Text>
+        </View>
+
+        {/* footer! */}
+
+        <View style={styles.footer}>
+          <Button
+            title="Getting Started"
+            buttonStyle={{
+              marginHorizontal: wp(3)
+            }}
+            onPress={() => {}}
+            hasShadow
+          />
         </View>
       </View>
     </ScreenWrapper>
@@ -55,5 +69,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(10),
     fontSize: hp(1.7),
     color: theme.colors.text
+  },
+  footer: {
+    gap: 30,
+    width: "100%"
   }
 });
