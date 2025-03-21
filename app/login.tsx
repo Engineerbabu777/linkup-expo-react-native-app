@@ -1,4 +1,11 @@
-import { View, Text, StatusBar, StyleSheet, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StatusBar,
+  StyleSheet,
+  TextInput,
+  Pressable
+} from "react-native";
 import React, { useRef, useState } from "react";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import BackButton from "@/components/BackButton";
@@ -6,6 +13,7 @@ import { hp, wp } from "@/helpers/common";
 import { theme } from "@/constants/theme";
 import Input from "@/components/Input";
 import { Icon } from "@/assets/icons";
+import Button from "@/components/Button";
 
 type Props = {};
 
@@ -13,6 +21,9 @@ const login = (props: Props) => {
   const emailRef = useRef("");
   const passwordRef = useRef("");
   const [loading, setLoading] = useState(false);
+
+  const handleLogin = () => {};
+
   return (
     <ScreenWrapper bg={"white"}>
       <StatusBar barStyle={"dark-content"} />
@@ -40,14 +51,37 @@ const login = (props: Props) => {
           <Input
             icon={<Icon name={"mail"} size={26} strokeWidth={1.6} />}
             placeholder={"Enter your email"}
-            onChangeText={() => {}}
+            onChangeText={(value) => {
+              emailRef.current = value;
+            }}
           />
           <Input
             icon={<Icon name={"lock"} size={26} strokeWidth={1.6} />}
             placeholder={"Enter your password"}
-            onChangeText={() => {}}
+            onChangeText={(value) => {
+              passwordRef.current = value;
+            }}
             secureTextEntry
           />
+          <Text style={styles.forgotPassword}>Forgot Password?</Text>
+
+          <Button title="Login" loading={loading} onPress={handleLogin} />
+        </View>
+
+        {/* footer! */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Don't have an account?</Text>
+
+          <Pressable style={{}}>
+            <Text
+              style={[
+                styles.footerText,
+                { color: theme.colors.primaryDark, fontWeight: "700" }
+              ]}
+            >
+              Sign up
+            </Text>
+          </Pressable>
         </View>
       </View>
     </ScreenWrapper>
@@ -80,5 +114,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 5
+  },
+  footerText: {
+    textAlign: "center",
+    color: theme.colors.text,
+    fontSize: hp(1.6)
   }
 });

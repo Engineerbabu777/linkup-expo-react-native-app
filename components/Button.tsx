@@ -13,8 +13,8 @@ import Loading from "./Loading";
 type Props = {};
 
 const Button = ({
-  buttonStyle,
-  textStyle,
+  buttonStyle = {},
+  textStyle = {},
   title = "",
   onPress = () => {},
   loading = false,
