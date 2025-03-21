@@ -11,6 +11,7 @@ import ScreenWrapper from "@/components/ScreenWrapper";
 import { hp, wp } from "@/helpers/common";
 import { theme } from "@/constants/theme";
 import Button from "@/components/Button";
+import { router } from "expo-router";
 
 type Props = {};
 
@@ -27,9 +28,9 @@ const Welcome = (props: Props) => {
         />
 
         <View style={{ gap: 20 }}>
-          <Text style={styles.title}>LinkUp!</Text>
+          <Text style={styles.title}>ConnectHub!</Text>
           <Text style={styles.punchLine}>
-            Where every thought finds a home and every story made
+            Where connections thrive. Where moments come alive.
           </Text>
         </View>
 
@@ -46,13 +47,13 @@ const Welcome = (props: Props) => {
           />
           <View style={styles.bottomTextContainer}>
             <Text style={styles.loginText}>Already have an account!</Text>
-            <Pressable style={{}}>
+            <Pressable style={{}} onPress={() => router.push("/login")}>
               <Text
                 style={[
                   styles.loginText,
                   {
                     color: theme.colors.primaryDark,
-                    fontWeight:'700'
+                    fontWeight: "700"
                   }
                 ]}
               >
