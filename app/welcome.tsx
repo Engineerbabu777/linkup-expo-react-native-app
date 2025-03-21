@@ -1,4 +1,11 @@
-import { Image, StatusBar, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 import React from "react";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import { hp, wp } from "@/helpers/common";
@@ -37,6 +44,22 @@ const Welcome = (props: Props) => {
             onPress={() => {}}
             hasShadow
           />
+          <View style={styles.bottomTextContainer}>
+            <Text style={styles.loginText}>Already have an account!</Text>
+            <Pressable style={{}}>
+              <Text
+                style={[
+                  styles.loginText,
+                  {
+                    color: theme.colors.primaryDark,
+                    fontWeight:'700'
+                  }
+                ]}
+              >
+                Login
+              </Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </ScreenWrapper>
@@ -73,5 +96,16 @@ const styles = StyleSheet.create({
   footer: {
     gap: 30,
     width: "100%"
+  },
+  bottomTextContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5
+  },
+  loginText: {
+    textAlign: "center",
+    color: theme.colors.text,
+    fontSize: hp(1.6)
   }
 });

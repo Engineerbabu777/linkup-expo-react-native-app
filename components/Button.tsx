@@ -8,6 +8,7 @@ import {
 import React from "react";
 import { theme } from "@/constants/theme";
 import { hp } from "@/helpers/common";
+import Loading from "./Loading";
 
 type Props = {};
 
@@ -33,7 +34,7 @@ const Button = ({
         <View
           style={[styles.button, buttonStyle, { backgroundColor: "white" }]}
         >
-          <ActivityIndicator />
+          <Loading />
         </View>
       </>
     );
