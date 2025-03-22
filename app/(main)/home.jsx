@@ -1,12 +1,16 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { hp, wp } from "@/helpers/common";
+
+import { Icon } from "@/assets/icons";
 import React from "react";
 import ScreenWrapper from "@/components/ScreenWrapper";
-import { hp, wp } from "@/helpers/common";
-import { theme } from "@/constants/theme";
-import { Icon } from "@/assets/icons";
 import { router } from "expo-router";
+import { theme } from "@/constants/theme";
+import { useAuth } from "@/context/AuthContext";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import Avatar from "../../components/Avatar";
 
 const home = () => {
+  const { user } = useAuth();
   return (
     <ScreenWrapper>
       <View style={styles.container}>
@@ -36,11 +40,14 @@ const home = () => {
             </Pressable>
             <Pressable onPress={() => router.push("profile")}>
               <Text>
-                <Icon
-                  name={"user"}
-                  size={hp(3.2)}
-                  strokeWidth={2}
-                  color={theme.colors.text}
+                <Avatar
+                  uri={
+                    user?.image ||
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjDGMp734S91sDuUFqL51_xRTXS15iiRoHew&s"
+                  }
+                  size={hp(4.3)}
+                  rounded={theme.radius.sm}
+                  style={{ borderWidth: 1 }}
                 />
               </Text>
             </Pressable>
