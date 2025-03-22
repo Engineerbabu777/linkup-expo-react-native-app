@@ -16,6 +16,7 @@ import Input from "@/components/Input";
 import { Icon } from "@/assets/icons";
 import Button from "@/components/Button";
 import { router } from "expo-router";
+import { supabase } from "@/lib/supabase";
 
 type Props = {};
 
@@ -24,10 +25,38 @@ const login = (props: Props) => {
   const passwordRef = useRef("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!emailRef.current || !passwordRef.current) {
       Alert.alert("Login", "please fill all details");
       return;
+    }
+
+    // Trim input values
+    const email = emailRef.current.trim();
+    const password = passwordRef.current.trim();
+
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password
+      });
+
+      if (error) {
+        Alert.alert("Login Failed", error.message);
+        return;
+      }
+
+      Alert.alert("Login Successful");
+    } catch (err) {
+      Alert.alert(
+        "Login Error",
+        "An unexpected error occurred. Please try again."
+      );
+      console.error("Login Error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
