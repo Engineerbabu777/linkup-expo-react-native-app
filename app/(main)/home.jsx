@@ -12,7 +12,7 @@ import Avatar from "../../components/Avatar";
 const home = () => {
   const { user } = useAuth();
   return (
-    <ScreenWrapper>
+    <ScreenWrapper bg={"white"}>
       <View style={styles.container}>
         {/* Header! */}
         <View style={styles.header}>
