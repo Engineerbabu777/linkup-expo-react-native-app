@@ -16,6 +16,7 @@ import Input from "@/components/Input";
 import { Icon } from "@/assets/icons";
 import Button from "@/components/Button";
 import { router } from "expo-router";
+import { supabase } from "@/lib/supabase";
 
 type Props = {};
 
@@ -26,10 +27,44 @@ const SignUp = (props: Props) => {
 
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    if (!emailRef.current || !passwordRef.current) {
-      Alert.alert("Sign up", "please fill all details");
+  const handleLogin = async () => {
+    if (!emailRef.current || !passwordRef.current || !nameRef.current) {
+      Alert.alert("Sign Up", "Please fill in all required fields.");
       return;
+    }
+
+    // Trim input values
+    const name = nameRef.current.trim();
+    const email = emailRef.current.trim();
+    const password = passwordRef.current.trim();
+
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name
+          }
+        }
+      });
+
+      if (error) {
+        Alert.alert("Sign Up Failed", error.message);
+        return;
+      }
+
+      Alert.alert("Sign Up Successful", "Your account has been created.");
+    } catch (err) {
+      Alert.alert(
+        "Sign Up Error",
+        "An unexpected error occurred. Please try again."
+      );
+      console.error("Sign Up Error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
