@@ -3,7 +3,7 @@ import { createContext, useContext, useState, ReactNode } from "react";
 interface AuthContextType {
   user: any;
   setAuth: (authUser: any) => void;
-  setAuthData: (userData: any) => void;
+  setUserData: (userData: any) => void;
 }
 
 // Create a context with a default undefined value (it will be set in the provider)
@@ -21,12 +21,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(authUser);
   };
 
-  const setAuthData = (userData: any) => {
+  const setUserData = (userData: any) => {
     setUser((prevUser) => (prevUser ? { ...prevUser, ...userData } : null));
   };
 
   return (
-    <AuthContext.Provider value={{ user, setAuth, setAuthData }}>
+    <AuthContext.Provider value={{ user, setAuth, setUserData }}>
       {children}
     </AuthContext.Provider>
   );
