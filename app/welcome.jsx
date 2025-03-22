@@ -13,9 +13,7 @@ import { theme } from "@/constants/theme";
 import Button from "@/components/Button";
 import { router } from "expo-router";
 
-type Props = {};
-
-const Welcome = (props: Props) => {
+const Welcome = () => {
   return (
     <ScreenWrapper bg={"white"}>
       <StatusBar barStyle={"dark-content"} />

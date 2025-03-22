@@ -18,9 +18,8 @@ import Button from "@/components/Button";
 import { router } from "expo-router";
 import { supabase } from "@/lib/supabase";
 
-type Props = {};
 
-const login = (props: Props) => {
+const login = () => {
   const emailRef = useRef("");
   const passwordRef = useRef("");
   const [loading, setLoading] = useState(false);

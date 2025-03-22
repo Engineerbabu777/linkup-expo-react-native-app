@@ -18,9 +18,8 @@ import Button from "@/components/Button";
 import { router } from "expo-router";
 import { supabase } from "@/lib/supabase";
 
-type Props = {};
 
-const SignUp = (props: Props) => {
+const SignUp = () => {
   const emailRef = useRef("");
   const passwordRef = useRef("");
   const nameRef = useRef("");
