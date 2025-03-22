@@ -49,6 +49,7 @@ const login = (props: Props) => {
       }
 
       Alert.alert("Login Successful");
+      // router.push("/(main)/home");
     } catch (err) {
       Alert.alert(
         "Login Error",

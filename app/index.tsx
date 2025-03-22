@@ -1,6 +1,17 @@
-import { Redirect } from "expo-router";
-import { Text, View } from "react-native";
+import { theme } from "@/constants/theme";
+import { ActivityIndicator View } from "react-native";
 
 export default function Index() {
-  return <Redirect href={"/welcome"} />;
+  return (
+    <View
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flex: 1
+      }}
+    >
+      <ActivityIndicator size={"small"} color={theme.colors.primary} />
+    </View>
+  );
 }
