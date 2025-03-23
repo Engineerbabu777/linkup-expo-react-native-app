@@ -17,6 +17,7 @@ import Input from "@/components/Input";
 import { useAuth } from "@/context/AuthContext";
 import Button from "@/components/Button";
 import { updateUser } from "@/services/user.service";
+import { router } from "expo-router";
 type Props = {};
 
 export const USER_IMAGE =
@@ -49,20 +50,18 @@ const index = (props: Props) => {
     let { address, bio, image, name, phoneNumber } = userData;
 
     if (!name || !phoneNumber || !address || !bio) {
-      Alert.alert("Error", "Please fill all the fields"); 
+      Alert.alert("Error", "Please fill all the fields");
       return;
     }
 
     setLoading(true);
 
     try {
-      const { success, Data, msg } = await updateUser(
-        currentUser?.id,
-        userData
-      );
+      const { success, msg } = await updateUser(currentUser?.id, userData);
 
       if (success) {
-        setUserData(Data);
+        setUserData({ ...userData, ...user });
+        router.back();
       } else {
         Alert.alert("Update Failed", msg || "Something went wrong!");
       }
