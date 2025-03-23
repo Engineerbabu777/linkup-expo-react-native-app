@@ -74,36 +74,38 @@ const index = (props: Props) => {
     setLoading(true);
 
     try {
-      if (typeof image === "object") {
-        console.log("abc");
-        let imageRes = await updloadFile("profiles", image?.uri, true);
+      if (typeof image === "object" && image?.uri) {
+        let imageRes = await updloadFile("profiles", image.uri, true);
 
-        if (imageRes.success) userData.image = imageRes.data;
-        else userData.image = null;
+        if (imageRes.success) {
+          userData.image = imageRes.data; // ✅ Update userData with the new image URL
+          setUser({
+            ...user,
+            image: imageRes.data
+          });
+        } else {
+          throw new Error("Image upload failed");
+        }
       }
 
       const { success, msg } = await updateUser(currentUser?.id, userData);
 
       if (success) {
-        setUserData({ ...userData, ...user });
+        setUserData({ ...userData, image: getSupabaseFileUrl(userData.image) }); // ✅ Corrected: Only update with the latest userData
         router.back();
       } else {
         Alert.alert("Update Failed", msg || "Something went wrong!");
       }
     } catch (error) {
-      Alert.alert("Error", error.message || "Something went wrong!");
+      Alert.alert("Error", error?.message || "Something went wrong!");
     } finally {
       setLoading(false);
     }
   };
 
-  const USER_IMAGE = user?.image
-    ? typeof user?.image === "object"
-      ? user?.image?.uri
-      : getSupabaseFileUrl(user?.image)
-    : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjDGMp734S91sDuUFqL51_xRTXS15iiRoHew&s";
+  const USER_IMAGE1 =
+    typeof user.image === "string" ? { uri: user.image } : user.image;
 
-    console.log({USER_IMAGE})
   return (
     <ScreenWrapper bg={"white"}>
       <View style={styles.container}>
@@ -113,7 +115,7 @@ const index = (props: Props) => {
           {/* Form! */}
           <View style={styles.form}>
             <View style={styles.avatarContainer}>
-              <Image source={USER_IMAGE} style={styles.avatar} />
+              <Image source={USER_IMAGE1} style={styles.avatar} />
               <Pressable style={styles.cameraIcon} onPress={pickImage}>
                 <Icon name={"camera"} size={20} strokeWidth={2.5} />
               </Pressable>
