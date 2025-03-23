@@ -42,7 +42,7 @@ export default function RichTextEditor({ editorRef, onChange }) {
           )
         }}
         style={styles.richBar}
-        flatContainerStyle={styles.listStyle}
+        flatContainerStyle={styles.flatStyle}
         editor={editorRef}
         disabled={false}
         selectedIconTint={theme.colors.primary}
@@ -65,7 +65,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: theme.radius.xl,
     backgroundColor: theme.colors.darkLight
   },
-  listStyle: {},
+  flatStyle: {
+    paddingHorizontal: 8,
+    gap: 3
+  },
   rich: {
     minHeight: 240,
     flex: 1,
