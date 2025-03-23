@@ -18,10 +18,11 @@ import { useAuth } from "@/context/AuthContext";
 import Button from "@/components/Button";
 import { updateUser } from "@/services/user.service";
 import { router } from "expo-router";
+import * as ImagePicker from "expo-image-picker";
+import { getSupabaseFileUrl, updloadFile } from "@/services/image.service";
+
 type Props = {};
 
-export const USER_IMAGE =
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjDGMp734S91sDuUFqL51_xRTXS15iiRoHew&s";
 const index = (props: Props) => {
   const { user: currentUser, setUserData } = useAuth();
   const [user, setUser] = useState({
@@ -29,7 +30,7 @@ const index = (props: Props) => {
     phoneNumber: "",
     bio: "",
     address: "",
-    image: null
+    image: ""
   });
   const [loading, setLoading] = useState(false);
 
@@ -45,11 +46,27 @@ const index = (props: Props) => {
     }
   }, []);
 
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.7
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setUser({ ...user, image: result.assets[0] });
+    }
+  };
+
   const onSubmit = async () => {
     let userData = { ...user };
     let { address, bio, image, name, phoneNumber } = userData;
 
-    if (!name || !phoneNumber || !address || !bio) {
+    if (!name || !phoneNumber || !address || !bio || !image) {
       Alert.alert("Error", "Please fill all the fields");
       return;
     }
@@ -57,6 +74,14 @@ const index = (props: Props) => {
     setLoading(true);
 
     try {
+      if (typeof image === "object") {
+        console.log("abc");
+        let imageRes = await updloadFile("profiles", image?.uri, true);
+
+        if (imageRes.success) userData.image = imageRes.data;
+        else userData.image = null;
+      }
+
       const { success, msg } = await updateUser(currentUser?.id, userData);
 
       if (success) {
@@ -72,6 +97,13 @@ const index = (props: Props) => {
     }
   };
 
+  const USER_IMAGE = user?.image
+    ? typeof user?.image === "object"
+      ? user?.image?.uri
+      : getSupabaseFileUrl(user?.image)
+    : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjDGMp734S91sDuUFqL51_xRTXS15iiRoHew&s";
+
+    console.log({USER_IMAGE})
   return (
     <ScreenWrapper bg={"white"}>
       <View style={styles.container}>
@@ -82,7 +114,7 @@ const index = (props: Props) => {
           <View style={styles.form}>
             <View style={styles.avatarContainer}>
               <Image source={USER_IMAGE} style={styles.avatar} />
-              <Pressable style={styles.cameraIcon}>
+              <Pressable style={styles.cameraIcon} onPress={pickImage}>
                 <Icon name={"camera"} size={20} strokeWidth={2.5} />
               </Pressable>
             </View>

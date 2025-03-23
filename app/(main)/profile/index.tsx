@@ -16,6 +16,7 @@ import { theme } from "@/constants/theme";
 import { supabase } from "@/lib/supabase";
 import Avatar from "@/components/Avatar";
 import { router } from "expo-router";
+import { getSupabaseFileUrl } from "@/services/image.service";
 
 export default function index() {
   const { user, setAuth } = useAuth();
@@ -90,6 +91,8 @@ const styles = StyleSheet.create({
 });
 
 const UserHeader = ({ user }) => {
+  const USER_IMAGE = user?.image;
+
   const handleLogout = () => {
     Alert.alert("Confirm", "Are you sure want to logout!", [
       {
@@ -125,14 +128,14 @@ const UserHeader = ({ user }) => {
         <View style={{ gap: 15 }}>
           <View style={styles.avatarContainer}>
             <Avatar
-              uri={
-                user?.image ||
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjDGMp734S91sDuUFqL51_xRTXS15iiRoHew&s"
-              }
+              uri={USER_IMAGE}
               size={hp(12)}
               rounded={theme.radius.xxl * 1.4}
             />
-            <Pressable style={styles.editIcon} onPress={() => router.push("/(main)/editProfile")}>
+            <Pressable
+              style={styles.editIcon}
+              onPress={() => router.push("/(main)/editProfile")}
+            >
               <Icon name={"edit"} strokeWidth={2.5} size={20} />
             </Pressable>
           </View>

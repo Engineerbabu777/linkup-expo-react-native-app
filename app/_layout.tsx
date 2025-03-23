@@ -1,5 +1,6 @@
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { getSupabaseFileUrl } from "@/services/image.service";
 import { getUserData } from "@/services/user.service";
 import { useRouter, Stack } from "expo-router";
 import { useEffect } from "react";
@@ -40,7 +41,17 @@ function MainLayout() {
     console.log({ user: user?.id });
     let res = await getUserData(user?.id);
     console.log({ res });
-    if (res.success) setUserData({ ...res.data, email: user?.email });
+    if (res.success) {
+      if (res.data?.image) {
+        setUserData({
+          ...res.data,
+          image: getSupabaseFileUrl(res.data?.image),
+          email: user?.email
+        });
+      } else {
+        setUserData({ ...res.data, email: user?.email });
+      }
+    }
   };
 
   return (
