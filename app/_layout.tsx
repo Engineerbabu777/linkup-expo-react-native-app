@@ -37,10 +37,10 @@ function MainLayout() {
   }, []);
 
   const updateUserData = async (user: any) => {
-    console.log({user:user?.id})
+    console.log({ user: user?.id });
     let res = await getUserData(user?.id);
     console.log({ res });
-    if (res.success) setUserData(res.data);
+    if (res.success) setUserData({ ...res.data, email: user?.email });
   };
 
   return (

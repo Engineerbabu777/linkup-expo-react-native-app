@@ -132,14 +132,34 @@ const UserHeader = ({ user }) => {
               size={hp(12)}
               rounded={theme.radius.xxl * 1.4}
             />
-            <Pressable style={styles.editIcon} onPress={() => router.push("/")}>
+            <Pressable style={styles.editIcon} onPress={() => router.push("/(main)/editProfile")}>
               <Icon name={"edit"} strokeWidth={2.5} size={20} />
             </Pressable>
           </View>
 
           <View style={{ alignItems: "center", gap: 4 }}>
-            <Text style={styles.userName}>{user?.name || 'Ali Hamza'}</Text>
-            <Text style={styles.infoText}>{user?.address || 'New York'}</Text>
+            <Text style={styles.userName}>{user?.name || "Ali Hamza"}</Text>
+            <Text style={styles.infoText}>{user?.address || "New York"}</Text>
+          </View>
+
+          <View style={{ gap: 10 }}>
+            <View style={styles.info}>
+              <Icon name={"mail"} size={20} color={theme.colors.textLight} />
+              <Text>{user?.email}</Text>
+            </View>
+
+            {user?.phoneNumber && (
+              <View style={styles.info}>
+                <Icon name={"call"} size={20} color={theme.colors.textLight} />
+                <Text>{user?.email}</Text>
+              </View>
+            )}
+
+            {user && user?.bio && (
+              <>
+                <Text style={styles.infoText}>{user?.bio}</Text>
+              </>
+            )}
           </View>
         </View>
       </View>
