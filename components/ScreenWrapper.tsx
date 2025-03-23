@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, StatusBar } from "react-native";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -20,6 +20,7 @@ const ScreenWrapper = ({ children, bg }: Props) => {
         backgroundColor: bg
       }}
     >
+      <StatusBar barStyle={"dark-content"} />
       {children}
     </View>
   );

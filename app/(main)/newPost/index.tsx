@@ -1,4 +1,5 @@
 import {
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -51,7 +52,6 @@ export default function index() {
       setFile(result.assets[0]);
     }
   };
-  const onSubmit = async () => {};
 
   const isLocalFile = (file) => {
     if (!file) return null;
@@ -83,12 +83,28 @@ export default function index() {
     return getSupabaseFileUrl(file)?.uri;
   };
 
+  const onSubmit = async () => {
+    if (!bodyRef.current || !file) {
+      Alert.alert("Post", "Please choose an image or add post body");
+      return;
+    }
+
+    let data = {
+      file,
+      body: bodyRef.current,
+      userId: user?.id
+    };
+  };
+
   return (
     <ScreenWrapper bg={"white"}>
       <View style={styles.container}>
         <Header title={"Create Post"} />
 
-        <ScrollView contentContainerStyle={{ gap: 20 }}>
+        <ScrollView
+          contentContainerStyle={{ gap: 20 }}
+          showsVerticalScrollIndicator={false}
+        >
           {/* avatar! */}
           <View style={styles.header}>
             <Avatar
@@ -113,7 +129,15 @@ export default function index() {
             <>
               <View style={styles.file}>
                 {getFileType(file) === "video" ? (
-                  <></>
+                  <>
+                    <Video
+                      style={{ flex: 1 }}
+                      source={{ uri: getFileUri(file) }}
+                      useNativeControls
+                      resizeMode="cover"
+                      isLooping
+                    />
+                  </>
                 ) : (
                   <>
                     <Image
@@ -140,7 +164,7 @@ export default function index() {
               <TouchableOpacity style={{}} onPress={() => onPick(true)}>
                 <Icon name={"image"} size={30} color={theme.colors.dark} />
               </TouchableOpacity>
-              <TouchableOpacity style={{}} onPress={() => onPick(true)}>
+              <TouchableOpacity style={{}} onPress={() => onPick(false)}>
                 <Icon name={"video"} size={30} color={theme.colors.dark} />
               </TouchableOpacity>
             </View>
