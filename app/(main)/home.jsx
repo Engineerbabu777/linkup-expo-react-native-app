@@ -54,13 +54,6 @@ const home = () => {
             </Pressable>
           </View>
         </View>
-
-        <Button
-          onPress={async () => {
-            await supabase.auth.signOut();
-          }}
-          title="Logiyt"
-        />
       </View>
     </ScreenWrapper>
   );

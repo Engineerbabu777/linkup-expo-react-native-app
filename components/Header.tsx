@@ -6,7 +6,7 @@ import { theme } from "@/constants/theme";
 
 type Props = {};
 
-const Header = ({ title, showBackButton = false, mb = 10 }) => {
+const Header = ({ title, showBackButton = true, mb = 10 }) => {
   return (
     <View
       style={[

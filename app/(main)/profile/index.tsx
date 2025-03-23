@@ -1,4 +1,11 @@
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
 import React from "react";
 import { useAuth } from "@/context/AuthContext";
 import ScreenWrapper from "@/components/ScreenWrapper";
@@ -7,6 +14,8 @@ import { hp, wp } from "@/helpers/common";
 import { Icon } from "@/assets/icons";
 import { theme } from "@/constants/theme";
 import { supabase } from "@/lib/supabase";
+import Avatar from "@/components/Avatar";
+import { router } from "expo-router";
 
 export default function index() {
   const { user, setAuth } = useAuth();
@@ -44,7 +53,10 @@ const styles = StyleSheet.create({
     padding: 7,
     borderRadius: 50,
     backgroundColor: "white",
-    shadowColor: theme.colors.textLight
+    shadowColor: theme.colors.textLight,
+    elevation: 7,
+    shadowRadius: 5,
+    shadowOpacity: 0.4
   },
   avatarContainer: {
     height: hp(12),
@@ -67,7 +79,13 @@ const styles = StyleSheet.create({
   },
   info: {
     alignItems: "center",
-    gap: 10
+    gap: 10,
+    flexDirection: "row"
+  },
+  userName: {
+    fontSize: hp(3),
+    fontWeight: "500",
+    color: theme.colors.textDark
   }
 });
 
@@ -91,7 +109,7 @@ const UserHeader = ({ user }) => {
       style={{ flex: 1, backgroundColor: "white", paddingHorizontal: wp(4) }}
     >
       <View>
-        <Header title={"Profile"} showBackButton />
+        <Header title={"Profile"} showBackButton mb={30} />
 
         <TouchableOpacity
           onPress={() => {
@@ -101,6 +119,29 @@ const UserHeader = ({ user }) => {
         >
           <Icon name={"logout"} color={theme.colors.rose} />
         </TouchableOpacity>
+      </View>
+
+      <View style={styles.container}>
+        <View style={{ gap: 15 }}>
+          <View style={styles.avatarContainer}>
+            <Avatar
+              uri={
+                user?.image ||
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjDGMp734S91sDuUFqL51_xRTXS15iiRoHew&s"
+              }
+              size={hp(12)}
+              rounded={theme.radius.xxl * 1.4}
+            />
+            <Pressable style={styles.editIcon} onPress={() => router.push("/")}>
+              <Icon name={"edit"} strokeWidth={2.5} size={20} />
+            </Pressable>
+          </View>
+
+          <View style={{ alignItems: "center", gap: 4 }}>
+            <Text style={styles.userName}>{user?.name || 'Ali Hamza'}</Text>
+            <Text style={styles.infoText}>{user?.address || 'New York'}</Text>
+          </View>
+        </View>
       </View>
     </View>
   );

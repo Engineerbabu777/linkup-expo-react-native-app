@@ -9,6 +9,7 @@ export const getUserData = async (userId: string) => {
       .single();
 
     if (error) {
+      console.log({ error });
       return {
         success: false,
         msg: error.message
