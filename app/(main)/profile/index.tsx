@@ -151,7 +151,7 @@ const UserHeader = ({ user }) => {
             {user?.phoneNumber && (
               <View style={styles.info}>
                 <Icon name={"call"} size={20} color={theme.colors.textLight} />
-                <Text>{user?.email}</Text>
+                <Text>{user?.phoneNumber}</Text>
               </View>
             )}
 

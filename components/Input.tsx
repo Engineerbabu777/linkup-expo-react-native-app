@@ -1,21 +1,35 @@
-import { View, Text, StyleSheet, TextInput } from "react-native";
-import React from "react";
+import React, { forwardRef } from "react";
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  TextInputProps,
+  ViewStyle
+} from "react-native";
 import { theme } from "@/constants/theme";
 import { hp } from "@/helpers/common";
 
-const Input = ({ containerStyles, icon, inputRef , ...props}) => {
-  return (
-    <View style={[styles.container, containerStyles]}>
-      {icon && icon}
-      <TextInput
-        style={{ flex: 1 }}
-        placeholderTextColor={theme.colors.textLight}
-        ref={inputRef && inputRef}
-        {...props}
-      />
-    </View>
-  );
-};
+interface InputProps extends TextInputProps {
+  containerStyles?: ViewStyle;
+  icon?: React.ReactNode;
+}
+
+// Forwarding ref to allow external control of TextInput
+const Input = forwardRef<TextInput, InputProps>(
+  ({ containerStyles, icon, ...props }, ref) => {
+    return (
+      <View style={[styles.container, containerStyles]}>
+        {icon && icon}
+        <TextInput
+          style={{ flex: 1 }}
+          placeholderTextColor={theme.colors.textLight}
+          ref={ref}
+          {...props}
+        />
+      </View>
+    );
+  }
+);
 
 export default Input;
 
@@ -28,7 +42,6 @@ const styles = StyleSheet.create({
     borderWidth: 0.4,
     borderColor: theme.colors.text,
     borderRadius: theme.radius.xxl,
-    borderCurve: "continuous",
     paddingHorizontal: 18,
     gap: 12
   }
