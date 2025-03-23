@@ -37,7 +37,7 @@ const login = () => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
@@ -48,7 +48,7 @@ const login = () => {
       }
 
       Alert.alert("Login Successful");
-      // router.push("/(main)/home");
+      router.push("/(main)/home");
     } catch (err) {
       Alert.alert(
         "Login Error",

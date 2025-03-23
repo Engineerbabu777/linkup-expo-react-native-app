@@ -6,8 +6,9 @@ import ScreenWrapper from "@/components/ScreenWrapper";
 import { router } from "expo-router";
 import { theme } from "@/constants/theme";
 import { useAuth } from "@/context/AuthContext";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Button, Pressable, StyleSheet, Text, View } from "react-native";
 import Avatar from "../../components/Avatar";
+import { supabase } from "@/lib/supabase";
 
 const home = () => {
   const { user } = useAuth();
@@ -53,6 +54,13 @@ const home = () => {
             </Pressable>
           </View>
         </View>
+
+        <Button
+          onPress={async () => {
+            await supabase.auth.signOut();
+          }}
+          title="Logiyt"
+        />
       </View>
     </ScreenWrapper>
   );

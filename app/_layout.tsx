@@ -19,10 +19,19 @@ function MainLayout() {
   useEffect(() => {
     supabase.auth.onAuthStateChange((_event, session) => {
       console.log({ session, _event });
-      if (_event === "INITIAL_SESSION") {
+      if (_event === "INITIAL_SESSION" && session) {
         updateUserData(session?.user);
         setAuth(session?.user);
         router.push("/home");
+      }
+      if (_event === "SIGNED_OUT") {
+        updateUserData(null);
+        setAuth(null);
+        router.push("/welcome");
+      }
+
+      if (_event === "INITIAL_SESSION" && !session) {
+        router.push("/welcome");
       }
     });
   }, []);
