@@ -47,15 +47,12 @@ const index = (props: Props) => {
   }, []);
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.7
     });
-
-    console.log(result);
 
     if (!result.canceled) {
       setUser({ ...user, image: result.assets[0] });
@@ -91,7 +88,7 @@ const index = (props: Props) => {
       const { success, msg } = await updateUser(currentUser?.id, userData);
 
       if (success) {
-        setUserData({ ...userData, image: getSupabaseFileUrl(userData.image) }); // ✅ Corrected: Only update with the latest userData
+        setUserData({ ...userData, image: getSupabaseFileUrl(userData.image) }); 
         router.back();
       } else {
         Alert.alert("Update Failed", msg || "Something went wrong!");
