@@ -19,6 +19,7 @@ import { supabase } from "@/lib/supabase";
 import { fetchPosts } from "@/services/post.service";
 import PostCard from "@/components/PostCard";
 import Loading from "@/components/Loading";
+import { getUserData } from "@/services/user.service";
 
 let limit = 5;
 const home = () => {
@@ -26,7 +27,15 @@ const home = () => {
 
   const [posts, setPosts] = useState([]);
 
-  const handlePostEvent = () => {};
+  const handlePostEvent = async (payload) => {
+    console.log({ payload });
+    if (payload.eventType === "INSERT" && payload.new?.id) {
+      let newPost = { ...payload.new };
+      let res = await getUserData(newPost.userid);
+      newPost.user = res.success ? res.data : {};
+      setPosts((prevPosts) => [newPost, ...prevPosts]);
+    }
+  };
   useEffect(() => {
     let postChannel = supabase
       .channel("posts")
@@ -34,7 +43,8 @@ const home = () => {
         "postgres_changes",
         { event: "*", schema: "public", table: "posts" },
         handlePostEvent
-      );
+      ).subscribe();
+      console.log({postChannel})
     getPosts();
 
     return () => {
