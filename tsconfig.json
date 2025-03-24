@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "app/(main)/notifications.jsx", "app/(main)/home.jsx", "app/login.jsx", "app/signUp.jsx", "app/welcome.jsx"  ]
+, "app/(main)/notifications.jsx", "app/(main)/home.tsx", "app/login.jsx", "app/signUp.jsx", "app/welcome.jsx"  ]
 }

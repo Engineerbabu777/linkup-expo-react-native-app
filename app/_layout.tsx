@@ -4,7 +4,9 @@ import { getSupabaseFileUrl } from "@/services/image.service";
 import { getUserData } from "@/services/user.service";
 import { useRouter, Stack } from "expo-router";
 import { useEffect } from "react";
+import { LogBox } from "react-native";
 
+LogBox.ignoreAllLogs(true);
 export default function Provider() {
   return (
     <AuthProvider>

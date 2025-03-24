@@ -1,17 +1,54 @@
 import { hp, wp } from "@/helpers/common";
 
 import { Icon } from "@/assets/icons";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import { router } from "expo-router";
 import { theme } from "@/constants/theme";
 import { useAuth } from "@/context/AuthContext";
-import { Button, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 import Avatar from "../../components/Avatar";
 import { supabase } from "@/lib/supabase";
+import { fetchPosts } from "@/services/post.service";
+import PostCard from "@/components/PostCard";
+import Loading from "@/components/Loading";
 
+let limit = 5;
 const home = () => {
   const { user } = useAuth();
+
+  const [posts, setPosts] = useState([]);
+
+  const handlePostEvent = () => {};
+  useEffect(() => {
+    let postChannel = supabase
+      .channel("posts")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "posts" },
+        handlePostEvent
+      );
+    getPosts();
+
+    return () => {
+      supabase.removeChannel(postChannel);
+    };
+  }, []);
+  const getPosts = async () => {
+    limit = limit + 10;
+    let res = await fetchPosts(limit);
+    if (res.success) {
+      setPosts(res.data);
+    }
+    console.log({ res: res.data[0] });
+  };
   return (
     <ScreenWrapper bg={"white"}>
       <View style={styles.container}>
@@ -54,6 +91,19 @@ const home = () => {
             </Pressable>
           </View>
         </View>
+
+        <FlatList
+          data={posts}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.listStyle}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <PostCard item={item} currentUser={user} />}
+          ListFooterComponent={
+            <View style={{ marginVertical: posts.length == 0 ? 200 : 30 }}>
+              <Loading />
+            </View>
+          }
+        />
       </View>
     </ScreenWrapper>
   );
