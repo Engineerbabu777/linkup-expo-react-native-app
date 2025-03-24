@@ -1,5 +1,5 @@
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { theme } from "@/constants/theme";
 import { hp, wp } from "@/helpers/common";
 import Avatar from "./Avatar";
@@ -41,7 +41,7 @@ export default function PostCard({ item, currentUser, hasShadow = true }) {
 
   const onLike = async () => {
     let data = {
-      userid: currentUser?.id,
+      userId: currentUser?.id,
       postId: item?.id
     };
 
@@ -51,6 +51,10 @@ export default function PostCard({ item, currentUser, hasShadow = true }) {
       Alert.alert("Post", "something went wrong");
     }
   };
+
+  const isLikedByMe = item?.likesBy.find(
+    (likeData) => likeData?.userId === currentUser?.id
+  );
 
   return (
     <View style={[styles.container, hasShadow && shadowStyles]}>
@@ -117,16 +121,16 @@ export default function PostCard({ item, currentUser, hasShadow = true }) {
       </View>
 
       <View style={styles.footer}>
-        <View style={styles.footerButton} onPress={onLike}>
-          <TouchableOpacity>
+        <View style={styles.footerButton}>
+          <TouchableOpacity onPress={onLike}>
             <Icon
               name={"heart"}
               size={24}
-              color={!liked ? theme.colors.text : theme.colors.rose}
-              fill={!liked ? "white" : theme.colors.rose}
+              color={!isLikedByMe ? theme.colors.text : theme.colors.rose}
+              fill={!isLikedByMe ? "white" : theme.colors.rose}
             />
           </TouchableOpacity>
-          <Text style={styles.count}>{likes?.length}</Text>
+          <Text style={styles.count}>{item?.likesCount[0]?.count}</Text>
         </View>
 
         <View style={styles.footerButton}>
