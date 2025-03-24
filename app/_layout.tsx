@@ -61,6 +61,13 @@ function MainLayout() {
       screenOptions={{
         headerShown: false
       }}
-    />
+    >
+      <Stack.Screen
+        name="(main)/postDetails/index"
+        options={{
+          presentation: "modal"
+        }}
+      />
+    </Stack>
   );
 }

@@ -18,6 +18,7 @@ import { Image } from "expo-image";
 import { Video } from "expo-av";
 import { createPostLike, removePostLike } from "@/services/post.service";
 import Loading from "./Loading";
+import { router } from "expo-router";
 
 const textStyle = {
   color: theme.colors.dark,
@@ -90,6 +91,15 @@ export default function PostCard({ item, currentUser, hasShadow = true }) {
       setLoading(false);
     }
     Share.share(content);
+  };
+
+  const openDetails = () => {
+    router.push({
+      pathname: "/postDetails",
+      params: {
+        postId: item?.id
+      }
+    });
   };
 
   return (
@@ -170,7 +180,7 @@ export default function PostCard({ item, currentUser, hasShadow = true }) {
         </View>
 
         <View style={styles.footerButton}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={openDetails}>
             <Icon name={"comment"} size={24} color={theme.colors.text} />
           </TouchableOpacity>
           <Text style={styles.count}>{"0"}</Text>
