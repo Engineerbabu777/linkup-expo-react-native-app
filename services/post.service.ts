@@ -130,6 +130,34 @@ export const createPostLike = async (postLike: any) => {
   }
 };
 
+export const createComment = async (comment: any) => {
+  try {
+    const { data, error } = await supabase
+      .from("comments")
+      .insert(comment)
+      .select()
+      .single();
+
+    if (error) {
+      console.log({ error });
+
+      return {
+        success: false,
+        msg: error.message
+      };
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.log({ error });
+
+    return {
+      success: false,
+      msg: "Could not create a comment to post!"
+    };
+  }
+};
+
 export const removePostLike = async (postId: any, userId: any) => {
   try {
     const { data, error } = await supabase
