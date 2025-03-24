@@ -21,11 +21,12 @@ import PostCard from "@/components/PostCard";
 import Loading from "@/components/Loading";
 import { getUserData } from "@/services/user.service";
 
-let limit = 5;
+let limit = 0;
 const home = () => {
   const { user } = useAuth();
 
   const [posts, setPosts] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
 
   const handlePostEvent = async (payload) => {
     console.log({ payload });
@@ -43,18 +44,20 @@ const home = () => {
         "postgres_changes",
         { event: "*", schema: "public", table: "posts" },
         handlePostEvent
-      ).subscribe();
-      console.log({postChannel})
-    getPosts();
+      )
+      .subscribe();
+    console.log({ postChannel });
+    // getPosts();
 
     return () => {
       supabase.removeChannel(postChannel);
     };
   }, []);
   const getPosts = async () => {
-    limit = limit + 10;
+    limit = limit + 5;
     let res = await fetchPosts(limit);
     if (res.success) {
+      if (posts.length == res.data?.length) setHasMore(false);
       setPosts(res.data);
     }
     console.log({ res: res.data[0] });
@@ -109,10 +112,22 @@ const home = () => {
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => <PostCard item={item} currentUser={user} />}
           ListFooterComponent={
-            <View style={{ marginVertical: posts.length == 0 ? 200 : 30 }}>
-              <Loading />
-            </View>
+            <>
+              {hasMore ? (
+                <View style={{ marginVertical: posts.length == 0 ? 200 : 30 }}>
+                  <Loading />
+                </View>
+              ) : (
+                <View style={{ marginVertical: 30 }}>
+                  <Text style={styles.noPosts}>No more posts</Text>
+                </View>
+              )}
+            </>
           }
+          onEndReached={() => {
+            getPosts();
+          }}
+          onEndReachedThreshold={0}
         />
       </View>
     </ScreenWrapper>
