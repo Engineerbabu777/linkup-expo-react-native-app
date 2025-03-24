@@ -69,3 +69,59 @@ export const fetchPosts = async (limit = 10) => {
     };
   }
 };
+
+export const createPostLike = async (postLike: any) => {
+  try {
+    const { data, error } = await supabase
+      .from("postLikes")
+      .insert(postLike)
+      .select()
+      .single();
+
+    if (error) {
+      console.log({ error });
+
+      return {
+        success: false,
+        msg: error.message
+      };
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.log({ error });
+
+    return {
+      success: false,
+      msg: "Could not like the post"
+    };
+  }
+};
+
+export const removePostLike = async (postId: any, userId: any) => {
+  try {
+    const { data, error } = await supabase
+      .from("postLikes")
+      .delete()
+      .eq("userId", userId)
+      .eq("postId", postId);
+
+    if (error) {
+      console.log({ error });
+
+      return {
+        success: false,
+        msg: error.message
+      };
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.log({ error });
+
+    return {
+      success: false,
+      msg: "Could not remove like from post"
+    };
+  }
+};

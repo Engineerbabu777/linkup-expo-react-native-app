@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { theme } from "@/constants/theme";
 import { hp, wp } from "@/helpers/common";
@@ -9,6 +9,7 @@ import { Icon } from "@/assets/icons";
 import RenderHtml from "react-native-render-html";
 import { Image } from "expo-image";
 import { Video } from "expo-av";
+import { createPostLike } from "@/services/post.service";
 
 const textStyle = {
   color: theme.colors.dark,
@@ -37,6 +38,20 @@ export default function PostCard({ item, currentUser, hasShadow = true }) {
   };
   let liked = false;
   let likes = [];
+
+  const onLike = async () => {
+    let data = {
+      userid: currentUser?.id,
+      postId: item?.id
+    };
+
+    let res = await createPostLike(data);
+    console.log({ res });
+    if (!res.success) {
+      Alert.alert("Post", "something went wrong");
+    }
+  };
+
   return (
     <View style={[styles.container, hasShadow && shadowStyles]}>
       <View style={styles.header}>
@@ -102,7 +117,7 @@ export default function PostCard({ item, currentUser, hasShadow = true }) {
       </View>
 
       <View style={styles.footer}>
-        <View style={styles.footerButton}>
+        <View style={styles.footerButton} onPress={onLike}>
           <TouchableOpacity>
             <Icon
               name={"heart"}
