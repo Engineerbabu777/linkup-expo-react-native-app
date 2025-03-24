@@ -48,3 +48,18 @@ export const getFilePath = (foldername, isImage) => {
 export const getSupabaseFileUrl = (filePath) => {
   return `https://vmfwyitewsntobjbdsqn.supabase.co/storage/v1/object/public/uploads/${filePath}`;
 };
+
+export const downloadFile = async (url) => {
+  try {
+    const { uri } = await FileSystem.downloadAsync(url, getLocalFilePath(url));
+    console.log("....");
+    return uri;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const getLocalFilePath = (filePath) => {
+  let fileName = filePath.split("/").pop();
+  return `${FileSystem.documentDirectory}${fileName}`;
+};
