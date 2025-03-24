@@ -21,12 +21,14 @@ import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 import { getSupabaseFileUrl } from "@/services/image.service";
 import { Video } from "expo-av";
+import { createOrUpdatePost } from "@/services/post.service";
+import { router } from "expo-router";
 
 export default function index() {
   const { user } = useAuth();
 
-  const bodyRef = useRef("");
-  const editorRef = useRef("");
+  const bodyRef = useRef(null);
+  const editorRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState(null);
@@ -66,7 +68,7 @@ export default function index() {
       return file.type;
     }
 
-    if (file.includes("postImage")) {
+    if (file.includes("postImages")) {
       return "image";
     } else {
       return "video";
@@ -84,7 +86,7 @@ export default function index() {
   };
 
   const onSubmit = async () => {
-    if (!bodyRef.current || !file) {
+    if (!bodyRef.current && !file) {
       Alert.alert("Post", "Please choose an image or add post body");
       return;
     }
@@ -94,6 +96,21 @@ export default function index() {
       body: bodyRef.current,
       userId: user?.id
     };
+
+    setLoading(true);
+    let res = await createOrUpdatePost(data);
+    setLoading(false);
+    if (res.success) {
+      // clear!
+      setFile(null);
+      bodyRef.current = "";
+      editorRef?.current?.setContentHTML("");
+      router.back();
+      Alert.alert("Post", "Post created successfully");
+    } else {
+      Alert.alert("Post", "Failed to create post");
+    }
+    console.log({ res });
   };
 
   return (
