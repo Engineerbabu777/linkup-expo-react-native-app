@@ -35,7 +35,12 @@ const tagStyles = {
     color: theme.colors.dark
   }
 };
-export default function PostCard({ item, currentUser, hasShadow = true }) {
+export default function PostCard({
+  item,
+  currentUser,
+  hasShadow = true,
+  showMoreIcon = true
+}) {
   const shadowStyles = {
     shadowOffset: {
       width: 0,
@@ -94,6 +99,7 @@ export default function PostCard({ item, currentUser, hasShadow = true }) {
   };
 
   const openDetails = () => {
+    if (!showMoreIcon) return;
     router.push({
       pathname: "/postDetails",
       params: {
@@ -119,14 +125,16 @@ export default function PostCard({ item, currentUser, hasShadow = true }) {
           </View>
         </View>
 
-        <TouchableOpacity onPress={() => {}}>
-          <Icon
-            name={"threeDotsHorizontal"}
-            size={hp(3.4)}
-            strokeWidth={3}
-            color={theme.colors.text}
-          />
-        </TouchableOpacity>
+        {showMoreIcon && (
+          <TouchableOpacity onPress={() => {}}>
+            <Icon
+              name={"threeDotsHorizontal"}
+              size={hp(3.4)}
+              strokeWidth={3}
+              color={theme.colors.text}
+            />
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={styles.content}>
