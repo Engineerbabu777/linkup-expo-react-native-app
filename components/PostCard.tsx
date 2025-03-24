@@ -1,5 +1,5 @@
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { theme } from "@/constants/theme";
 import { hp, wp } from "@/helpers/common";
 import Avatar from "./Avatar";
@@ -9,7 +9,7 @@ import { Icon } from "@/assets/icons";
 import RenderHtml from "react-native-render-html";
 import { Image } from "expo-image";
 import { Video } from "expo-av";
-import { createPostLike } from "@/services/post.service";
+import { createPostLike, removePostLike } from "@/services/post.service";
 
 const textStyle = {
   color: theme.colors.dark,
@@ -37,22 +37,33 @@ export default function PostCard({ item, currentUser, hasShadow = true }) {
     elevation: 1
   };
   let liked = false;
-  let likes = [];
+  const [likes, setLikes] = useState(item?.likesBy || []);
 
   const onLike = async () => {
-    let data = {
-      userId: currentUser?.id,
-      postId: item?.id
-    };
+    if (isLikedByMe) {
+      let res = await removePostLike(item?.id, currentUser?.id);
+      if (res.success) {
+        setLikes([...likes.filter((l) => l.userId !== currentUser?.id)]);
+      } else {
+        Alert.alert("Post", "something went wrong");
+      }
+    } else {
+      let data = {
+        userId: currentUser?.id,
+        postId: item?.id
+      };
 
-    let res = await createPostLike(data);
-    console.log({ res });
-    if (!res.success) {
-      Alert.alert("Post", "something went wrong");
+      let res = await createPostLike(data);
+      console.log({ res });
+      if (!res.success) {
+        Alert.alert("Post", "something went wrong");
+      } else {
+        setLikes([...likes, data]);
+      }
     }
   };
 
-  const isLikedByMe = item?.likesBy.find(
+  const isLikedByMe = likes.find(
     (likeData) => likeData?.userId === currentUser?.id
   );
 
@@ -130,7 +141,7 @@ export default function PostCard({ item, currentUser, hasShadow = true }) {
               fill={!isLikedByMe ? "white" : theme.colors.rose}
             />
           </TouchableOpacity>
-          <Text style={styles.count}>{item?.likesCount[0]?.count}</Text>
+          <Text style={styles.count}>{likes?.length}</Text>
         </View>
 
         <View style={styles.footerButton}>
