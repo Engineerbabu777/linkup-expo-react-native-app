@@ -35,7 +35,6 @@ export const fetchNotifications = async (recieverId) => {
       .select(`*, sender:senderId(id, name, image)`)
       .eq("receiverId", recieverId)
       .order("created_at", { ascending: false })
-      .single();
 
     if (error) {
       console.log({ error });

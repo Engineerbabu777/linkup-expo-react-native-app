@@ -9,7 +9,12 @@ import { getSupabaseFileUrl } from "@/services/image.service";
 
 type Props = {};
 
-const CommentItem = ({ item, canDelete = false, onDelete = () => {} }) => {
+const CommentItem = ({
+  item,
+  canDelete = false,
+  onDelete = () => {},
+  highlight = false
+}) => {
   const handleDelete = async () => {
     Alert.alert("Confirm", "Are you sure want to do this!", [
       {
@@ -28,7 +33,7 @@ const CommentItem = ({ item, canDelete = false, onDelete = () => {} }) => {
     <View style={styles.container}>
       <Avatar uri={getSupabaseFileUrl(item?.user?.image)} />
 
-      <View style={styles.content}>
+      <View style={[styles.content, highlight && styles.highlight]}>
         <View
           style={{
             flexDirection: "row",

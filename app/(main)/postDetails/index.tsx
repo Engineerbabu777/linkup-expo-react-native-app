@@ -27,7 +27,7 @@ import { getUserData } from "@/services/user.service";
 import { createNotifications } from "@/services/notifications.service";
 
 export default function index() {
-  const { postId } = useLocalSearchParams();
+  const { postId, commentId } = useLocalSearchParams();
   const inputRef = useRef(null);
 
   const [post, setPost] = useState<any>(null);
@@ -222,6 +222,7 @@ export default function index() {
                 canDelete={
                   user?.id === comment?.userId || user?.id === post?.userId
                 }
+                highlight={comment.id === commentId}
                 onDelete={onDeleteComment}
               />
             </>
