@@ -62,6 +62,43 @@ const home = () => {
             console.error("Error fetching user data for new post:", error);
           }
           break;
+        case "UPDATE":
+          if (!payload.new?.id) {
+            console.warn("Invalid INSERT payload: Missing new post ID");
+            return;
+          }
+
+          try {
+            const newPost = { ...payload.new };
+            const res = await getUserData(newPost.userId);
+
+            if (res.success) {
+              newPost.user = res.data;
+              newPost.postLikes = [];
+              newPost.comments = [{ count: 0 }];
+
+              // update the new body and file!
+              setPosts((prevPosts) => {
+                const index = prevPosts.findIndex(
+                  (post) => post.id === newPost.id
+                );
+                if (index !== -1) {
+                  return [
+                    ...prevPosts.slice(0, index),
+                    newPost,
+                    ...prevPosts.slice(index + 1)
+                  ];
+                } else {
+                  return [...prevPosts, newPost];
+                }
+              });
+            } else {
+              console.warn("User data fetch failed, post not added");
+            }
+          } catch (error) {
+            console.error("Error fetching user data for new post:", error);
+          }
+          break;
 
         case "DELETE":
           if (!payload.old?.id) {

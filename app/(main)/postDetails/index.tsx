@@ -123,7 +123,15 @@ export default function index() {
       Alert.alert("Post", res.msg);
     }
   };
-  const onEditPost = async (item) => {};
+  const onEditPost = async (item) => {
+    router.back();
+    router.push({
+      pathname: "/newPost",
+      params: {
+        ...item
+      }
+    });
+  };
 
   if (loading) {
     return (

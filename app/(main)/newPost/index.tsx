@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import Header from "@/components/Header";
 import { hp, wp } from "@/helpers/common";
@@ -22,16 +22,32 @@ import { Image } from "expo-image";
 import { getSupabaseFileUrl } from "@/services/image.service";
 import { Video } from "expo-av";
 import { createOrUpdatePost } from "@/services/post.service";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
 export default function index() {
   const { user } = useAuth();
+
+  const post = useLocalSearchParams();
 
   const bodyRef = useRef(null);
   const editorRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState(null);
+
+  console.log({ file });
+
+  useEffect(() => {
+    if (post && post.id) {
+      console.log("giood");
+      bodyRef.current = post?.body;
+      setFile(post.file || null);
+      setTimeout(() => {
+        console.log("exectured");
+        editorRef?.current?.setContentHTML(post.body);
+      }, 3000);
+    }
+  }, []);
 
   const onPick = async (isImage) => {
     let mediaConfig = {
@@ -82,7 +98,7 @@ export default function index() {
       return file.uri;
     }
 
-    return getSupabaseFileUrl(file)?.uri;
+    return getSupabaseFileUrl(file);
   };
 
   const onSubmit = async () => {
@@ -96,6 +112,10 @@ export default function index() {
       body: bodyRef.current,
       userId: user?.id
     };
+
+    if (post.id) {
+      data.id = post.id;
+    }
 
     setLoading(true);
     let res = await createOrUpdatePost(data);
@@ -192,7 +212,7 @@ export default function index() {
           buttonStyle={{
             height: hp(6.2)
           }}
-          title="Post"
+          title={post.id ? "Update" : "Post"}
           loading={loading}
           hasShadow={false}
           onPress={onSubmit}
