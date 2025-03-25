@@ -8,7 +8,11 @@ import {
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
-import { createComment, fetchPostDeatils } from "@/services/post.service";
+import {
+  createComment,
+  deleteComment,
+  fetchPostDeatils
+} from "@/services/post.service";
 import { hp, wp } from "@/helpers/common";
 import { theme } from "@/constants/theme";
 import PostCard from "@/components/PostCard";
@@ -17,6 +21,8 @@ import Loading from "@/components/Loading";
 import Input from "@/components/Input";
 import { Icon } from "@/assets/icons";
 import CommentItem from "@/components/CommentItem";
+import { supabase } from "@/lib/supabase";
+import { getUserData } from "@/services/user.service";
 
 export default function index() {
   const { postId } = useLocalSearchParams();
@@ -28,8 +34,39 @@ export default function index() {
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
 
+  const handleNewComment = async (payload) => {
+    if (payload.new) {
+      let newComment = { ...payload.new };
+      let res = await getUserData(newComment.userId);
+      newComment.user = res.success ? res.data : {};
+      setPost((prevPost) => {
+        const newComments = [...prevPost.comments];
+        newComments.push(newComment);
+        return { ...prevPost, comments: newComments };
+      });
+    }
+  };
+
   useEffect(() => {
+    let commentChannel = supabase
+      .channel("comments")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "comments",
+          filter: "postId=eq." + postId
+        },
+        handleNewComment
+      )
+      .subscribe();
+    // getPosts();
     getPostDetails();
+
+    return () => {
+      supabase.removeChannel(commentChannel);
+    };
   }, []);
 
   const getPostDetails = async () => {
@@ -55,6 +92,22 @@ export default function index() {
     if (res.success) {
       inputRef.current = "";
       setCommentValue("");
+    } else {
+      Alert.alert("comment", res.msg);
+    }
+  };
+
+  const onDeleteComment = async (comment) => {
+    let res = await deleteComment(comment.id);
+
+    if (res.success) {
+      setPost((prevPost) => {
+        let updatedPost = { ...prevPost };
+        updatedPost.comments = updatedPost.comments.filter(
+          (c) => c.id !== comment.id
+        );
+        return updatedPost;
+      });
     } else {
       Alert.alert("comment", res.msg);
     }

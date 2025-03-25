@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import React, { useState } from "react";
 import { hp } from "@/helpers/common";
 import { theme } from "@/constants/theme";
 import Avatar from "./Avatar";
@@ -9,7 +9,21 @@ import { getSupabaseFileUrl } from "@/services/image.service";
 
 type Props = {};
 
-const CommentItem = ({ item, canDelete = false }) => {
+const CommentItem = ({ item, canDelete = false, onDelete = () => {} }) => {
+  const handleDelete = async () => {
+    Alert.alert("Confirm", "Are you sure want to do this!", [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel"
+      },
+      {
+        text: "delete",
+        onPress: async () => onDelete(item),
+        style: "destructive"
+      }
+    ]);
+  };
   return (
     <View style={styles.container}>
       <Avatar uri={getSupabaseFileUrl(item?.user?.image)} />
@@ -25,12 +39,12 @@ const CommentItem = ({ item, canDelete = false }) => {
           <View style={styles.nameContainer}>
             <Text style={styles.text}>{item?.user?.name}</Text>
             <Text style={[styles.text, { color: theme.colors.textLight }]}>
-              <Text>.</Text>
+              <Text>•</Text>
               {moment(new Date(item?.created_at)).format("MMM d")}
             </Text>
           </View>
           {canDelete && (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleDelete}>
               <Icon name={"delete"} size={20} color={theme.colors.rose} />
             </TouchableOpacity>
           )}
