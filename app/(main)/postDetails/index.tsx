@@ -24,6 +24,7 @@ import { Icon } from "@/assets/icons";
 import CommentItem from "@/components/CommentItem";
 import { supabase } from "@/lib/supabase";
 import { getUserData } from "@/services/user.service";
+import { createNotifications } from "@/services/notifications.service";
 
 export default function index() {
   const { postId } = useLocalSearchParams();
@@ -93,6 +94,18 @@ export default function index() {
     if (res.success) {
       inputRef.current = "";
       setCommentValue("");
+
+      if (user.id != post.userId) {
+        let notify = {
+          senderId: user.id,
+          receiverId: post.userId,
+          title: "commented on your post",
+          data: JSON.stringify({ postId: post.id, commentId: res.data.id })
+        };
+        setIsLoading(false);
+
+        await createNotifications(notify);
+      }
     } else {
       Alert.alert("comment", res.msg);
     }

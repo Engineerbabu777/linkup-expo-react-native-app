@@ -29,18 +29,30 @@ export default function index() {
   const [hasMore, setHasMore] = useState(true);
 
   const getPosts = async () => {
-    limit = limit + 5;
+    if (!hasMore) return;
+    limit += 10;
+
+    console.log({ userId: user?.id });
+
     let res = await fetchPosts(limit, user?.id);
+
     if (res.success) {
-      if (posts.length == res.data?.length) setHasMore(false);
-      setPosts(res.data);
+      if (res.data.length < limit) {
+        setHasMore(false); // No more posts available
+      }
+
+      setPosts(res.data); // Update posts
     }
+
     console.log({ res: res.data[0] });
   };
 
-  useEffect(() => {
-    getPosts();
-  });
+  // useEffect(() => {
+  //   if (hasMore) {
+  //     getPosts();
+  //   }
+  // }, []);
+  console.log({ hasMore });
 
   return (
     <ScreenWrapper bg={"white"}>
@@ -53,7 +65,7 @@ export default function index() {
         ListFooterComponent={
           <>
             {hasMore ? (
-              <View style={{ marginVertical: posts.length == 0 ? 200 : 30 }}>
+              <View style={{ marginVertical: posts.length == 0 ? 100 : 30 }}>
                 <Loading />
               </View>
             ) : (
@@ -64,7 +76,9 @@ export default function index() {
           </>
         }
         onEndReached={() => {
-          getPosts();
+          if (hasMore) {
+            getPosts();
+          }
         }}
         ListHeaderComponentStyle={{ marginBottom: 30 }}
         onEndReachedThreshold={0}
