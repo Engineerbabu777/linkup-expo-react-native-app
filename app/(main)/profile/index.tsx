@@ -1,12 +1,13 @@
 import {
   Alert,
+  FlatList,
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import Header from "@/components/Header";
@@ -17,13 +18,58 @@ import { supabase } from "@/lib/supabase";
 import Avatar from "@/components/Avatar";
 import { router } from "expo-router";
 import { getSupabaseFileUrl } from "@/services/image.service";
-
+import { fetchPosts } from "@/services/post.service";
+import PostCard from "@/components/PostCard";
+import Loading from "@/components/Loading";
+var limit = 0;
 export default function index() {
   const { user, setAuth } = useAuth();
 
+  const [posts, setPosts] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+
+  const getPosts = async () => {
+    limit = limit + 5;
+    let res = await fetchPosts(limit, user?.id);
+    if (res.success) {
+      if (posts.length == res.data?.length) setHasMore(false);
+      setPosts(res.data);
+    }
+    console.log({ res: res.data[0] });
+  };
+
+  useEffect(() => {
+    getPosts();
+  });
+
   return (
     <ScreenWrapper bg={"white"}>
-      <UserHeader user={user} />
+      <FlatList
+        data={posts}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.listStyle}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <PostCard item={item} currentUser={user} />}
+        ListFooterComponent={
+          <>
+            {hasMore ? (
+              <View style={{ marginVertical: posts.length == 0 ? 200 : 30 }}>
+                <Loading />
+              </View>
+            ) : (
+              <View style={{ marginVertical: 30 }}>
+                <Text style={styles.noPosts}>No more posts</Text>
+              </View>
+            )}
+          </>
+        }
+        onEndReached={() => {
+          getPosts();
+        }}
+        ListHeaderComponentStyle={{ marginBottom: 30 }}
+        onEndReachedThreshold={0}
+        ListHeaderComponent={<UserHeader user={user} />}
+      />
     </ScreenWrapper>
   );
 }

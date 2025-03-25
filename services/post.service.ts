@@ -42,26 +42,46 @@ export const createOrUpdatePost = async (post) => {
   }
 };
 
-export const fetchPosts = async (limit = 10) => {
+export const fetchPosts = async (limit = 10, userId?: string) => {
   try {
-    const { data, error } = await supabase
-      .from("posts")
-      .select(
-        `*, user:users(id,name,image), likesCount:postLikes(count), likesBy:postLikes(*), comments(count)`
-      )
-      .order("created_at", { ascending: false })
-      .limit(limit);
+    if (userId) {
+      const { data, error } = await supabase
+        .from("posts")
+        .select(
+          `*, user:users(id,name,image), likesCount:postLikes(count), likesBy:postLikes(*), comments(count)`
+        )
+        .eq("userId", userId)
+        .order("created_at", { ascending: false })
+        .limit(limit);
 
-    if (error) {
-      console.log({ error });
+      if (error) {
+        console.log({ error });
 
-      return {
-        success: false,
-        msg: error.message
-      };
+        return {
+          success: false,
+          msg: error.message
+        };
+      }
+      return { success: true, data };
+    } else {
+      const { data, error } = await supabase
+        .from("posts")
+        .select(
+          `*, user:users(id,name,image), likesCount:postLikes(count), likesBy:postLikes(*), comments(count)`
+        )
+        .order("created_at", { ascending: false })
+        .limit(limit);
+
+      if (error) {
+        console.log({ error });
+
+        return {
+          success: false,
+          msg: error.message
+        };
+      }
+      return { success: true, data };
     }
-
-    return { success: true, data };
   } catch (error) {
     console.log({ error });
 
