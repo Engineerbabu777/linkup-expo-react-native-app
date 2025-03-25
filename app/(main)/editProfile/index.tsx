@@ -88,7 +88,7 @@ const index = (props: Props) => {
       const { success, msg } = await updateUser(currentUser?.id, userData);
 
       if (success) {
-        setUserData({ ...userData, image: getSupabaseFileUrl(userData.image) }); 
+        setUserData({ ...userData, image: getSupabaseFileUrl(userData.image) });
         router.back();
       } else {
         Alert.alert("Update Failed", msg || "Something went wrong!");
@@ -101,7 +101,11 @@ const index = (props: Props) => {
   };
 
   const USER_IMAGE1 =
-    typeof user.image === "string" ? { uri: user.image } : user.image;
+    typeof user.image === "string"
+      ? { uri: user.image }
+      : user.image
+      ? user.image
+      : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjDGMp734S91sDuUFqL51_xRTXS15iiRoHew&s";
 
   return (
     <ScreenWrapper bg={"white"}>

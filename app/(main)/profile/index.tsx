@@ -91,7 +91,11 @@ const styles = StyleSheet.create({
 });
 
 const UserHeader = ({ user }) => {
-  const USER_IMAGE = user?.image;
+  const USER_IMAGE =
+    user?.image ||
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjDGMp734S91sDuUFqL51_xRTXS15iiRoHew&s";
+
+  console.log({ USER_IMAGE });
 
   const handleLogout = () => {
     Alert.alert("Confirm", "Are you sure want to logout!", [

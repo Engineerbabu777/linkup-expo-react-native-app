@@ -47,7 +47,7 @@ export const fetchPosts = async (limit = 10) => {
     const { data, error } = await supabase
       .from("posts")
       .select(
-        `*, user:users(id,name,image), likesCount:postLikes(count), likesBy:postLikes(*)`
+        `*, user:users(id,name,image), likesCount:postLikes(count), likesBy:postLikes(*), comments(count)`
       )
       .order("created_at", { ascending: false })
       .limit(limit);
@@ -77,9 +77,10 @@ export const fetchPostDeatils = async (postId) => {
     const { data, error } = await supabase
       .from("posts")
       .select(
-        `*, user:users(id,name,image), likesCount:postLikes(count), likesBy:postLikes(*)`
+        `*, user:users(id,name,image), likesCount:postLikes(count), likesBy:postLikes(*), comments(*, user:users(name,image,id))`
       )
       .eq("id", postId)
+      .order("created_at", { ascending: false, foreignTable: "comments" })
       .single();
 
     if (error) {
@@ -132,6 +133,7 @@ export const createPostLike = async (postLike: any) => {
 
 export const createComment = async (comment: any) => {
   try {
+    console.log({ comment });
     const { data, error } = await supabase
       .from("comments")
       .insert(comment)

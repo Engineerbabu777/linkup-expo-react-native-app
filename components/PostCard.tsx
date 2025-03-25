@@ -60,7 +60,7 @@ export default function PostCard({
       if (res.success) {
         setLikes([...likes.filter((l) => l.userId !== currentUser?.id)]);
       } else {
-        Alert.alert("Post", "something went wrong");
+        Alert.alert("Post", "something went wrong2");
       }
     } else {
       let data = {
@@ -191,7 +191,7 @@ export default function PostCard({
           <TouchableOpacity onPress={openDetails}>
             <Icon name={"comment"} size={24} color={theme.colors.text} />
           </TouchableOpacity>
-          <Text style={styles.count}>{"0"}</Text>
+          <Text style={styles.count}>{item?.comments[0]?.count || 0}</Text>
         </View>
 
         <View style={styles.footerButton}>

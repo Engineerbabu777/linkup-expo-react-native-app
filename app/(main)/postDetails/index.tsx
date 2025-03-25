@@ -21,7 +21,7 @@ export default function index() {
   const { postId } = useLocalSearchParams();
   const inputRef = useRef(null);
 
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [commentValue, setCommentValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -45,15 +45,15 @@ export default function index() {
     let data = {
       userId: user?.id,
       postId: postId,
-      text: inputRef?.current
+      text: commentValue
     };
 
     setIsLoading(true);
 
     let res = await createComment(data);
     if (res.success) {
-      inputRef?.current = "";
-      commentValue = "";
+      inputRef.current = "";
+      setCommentValue("");
     } else {
       Alert.alert("comment", res.msg);
     }
@@ -61,8 +61,23 @@ export default function index() {
 
   if (loading) {
     return (
-      <>
+      <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
         <Loading />
+      </View>
+    );
+  }
+
+  if (!post) {
+    return (
+      <>
+        <View
+          style={[
+            styles.center,
+            { justifyContent: "flex-start", marginTop: 100 }
+          ]}
+        >
+          <Text style={styles.notFound}>No post found</Text>
+        </View>
       </>
     );
   }
@@ -73,7 +88,7 @@ export default function index() {
         contentContainerStyle={styles.list}
       >
         <PostCard
-          item={post}
+          item={{ ...post, comments: [{ count: post?.comments?.length }] }}
           currentUser={user}
           hasShadow={false}
           showMoreIcon={false}
