@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Image } from "expo-image";
 import { theme } from "../constants/theme";
+import { hp } from "@/helpers/common";
 
 export default function Avatar({
   uri,

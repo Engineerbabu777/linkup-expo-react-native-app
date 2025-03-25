@@ -16,6 +16,7 @@ import { useAuth } from "@/context/AuthContext";
 import Loading from "@/components/Loading";
 import Input from "@/components/Input";
 import { Icon } from "@/assets/icons";
+import CommentItem from "@/components/CommentItem";
 
 export default function index() {
   const { postId } = useLocalSearchParams();
@@ -115,6 +116,30 @@ export default function index() {
             <TouchableOpacity style={styles.sendIcon} onPress={onNewComment}>
               <Icon name={"send"} color={theme.colors.primaryDark} />
             </TouchableOpacity>
+          )}
+        </View>
+
+        <View
+          style={{
+            marginVertical: 15,
+            gap: 17
+          }}
+        >
+          {post?.comments?.map((comment: any) => (
+            <>
+              <CommentItem
+                item={comment}
+                key={comment.id}
+                canDelete={
+                  user?.id === comment?.userId || user?.id === post?.userId
+                }
+              />
+            </>
+          ))}
+          {post?.comments?.length === 0 && (
+            <Text style={{ color: theme.colors.text, marginLeft: 5 }}>
+              Be first to comment!
+            </Text>
           )}
         </View>
       </ScrollView>
