@@ -39,7 +39,10 @@ export default function PostCard({
   item,
   currentUser,
   hasShadow = true,
-  showMoreIcon = true
+  showMoreIcon = true,
+  showDelete = false,
+  onDelete = () => {},
+  onEdit = () => {}
 }) {
   const shadowStyles = {
     shadowOffset: {
@@ -108,6 +111,21 @@ export default function PostCard({
     });
   };
 
+  const handlePostDelete = async () => {
+    Alert.alert("Confirm", "Are you sure want to do this!", [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel"
+      },
+      {
+        text: "delete",
+        onPress: async () => await onDelete(item),
+        style: "destructive"
+      }
+    ]);
+  };
+
   return (
     <View style={[styles.container, hasShadow && shadowStyles]}>
       <View style={styles.header}>
@@ -134,6 +152,28 @@ export default function PostCard({
               color={theme.colors.text}
             />
           </TouchableOpacity>
+        )}
+
+        {showDelete && currentUser?.id === item?.userId && (
+          <>
+            <View style={styles.actins}>
+              <TouchableOpacity
+                onPress={() => {
+                  onEdit(item);
+                }}
+              >
+                <Icon name={"edit"} size={hp(2.5)} color={theme.colors.text} />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={handlePostDelete}>
+                <Icon
+                  name={"delete"}
+                  size={hp(2.5)}
+                  color={theme.colors.rose}
+                />
+              </TouchableOpacity>
+            </View>
+          </>
         )}
       </View>
 

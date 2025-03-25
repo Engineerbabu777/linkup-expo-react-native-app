@@ -188,6 +188,33 @@ export const removePostLike = async (postId: any, userId: any) => {
   }
 };
 
+export const removePost = async (postId: any) => {
+  try {
+    const { data, error } = await supabase
+      .from("posts")
+      .delete()
+      .eq("id", postId);
+
+    if (error) {
+      console.log({ error });
+
+      return {
+        success: false,
+        msg: error.message
+      };
+    }
+
+    return { success: true, data, id: postId };
+  } catch (error) {
+    console.log({ error });
+
+    return {
+      success: false,
+      msg: "Could not remove post"
+    };
+  }
+};
+
 export const deleteComment = async (commentId: any) => {
   try {
     const { data, error } = await supabase

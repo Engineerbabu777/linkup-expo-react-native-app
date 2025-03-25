@@ -7,11 +7,12 @@ import {
   View
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import {
   createComment,
   deleteComment,
-  fetchPostDeatils
+  fetchPostDeatils,
+  removePost
 } from "@/services/post.service";
 import { hp, wp } from "@/helpers/common";
 import { theme } from "@/constants/theme";
@@ -113,6 +114,17 @@ export default function index() {
     }
   };
 
+  const onDeletePost = async (item) => {
+    let res = await removePost(item?.id);
+
+    if (res.success) {
+      router.back();
+    } else {
+      Alert.alert("Post", res.msg);
+    }
+  };
+  const onEditPost = async (item) => {};
+
   if (loading) {
     return (
       <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
@@ -146,6 +158,9 @@ export default function index() {
           currentUser={user}
           hasShadow={false}
           showMoreIcon={false}
+          showDelete={true}
+          onDelete={onDeletePost}
+          onEdit={onEditPost}
         />
 
         <View style={styles.inputContainer}>
@@ -186,6 +201,7 @@ export default function index() {
                 canDelete={
                   user?.id === comment?.userId || user?.id === post?.userId
                 }
+                onDelete={onDeleteComment}
               />
             </>
           ))}
