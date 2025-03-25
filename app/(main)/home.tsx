@@ -29,14 +29,59 @@ const home = () => {
   const [hasMore, setHasMore] = useState(true);
 
   const handlePostEvent = async (payload) => {
-    console.log({ payload });
-    if (payload.eventType === "INSERT" && payload.new?.id) {
-      let newPost = { ...payload.new };
-      let res = await getUserData(newPost.userid);
-      newPost.user = res.success ? res.data : {};
-      setPosts((prevPosts) => [newPost, ...prevPosts]);
+    try {
+      console.log("Received Post Event:", payload);
+
+      if (!payload?.eventType) {
+        console.warn("Invalid payload: Missing eventType");
+        return;
+      }
+
+      switch (payload.eventType) {
+        case "INSERT":
+          if (!payload.new?.id) {
+            console.warn("Invalid INSERT payload: Missing new post ID");
+            return;
+          }
+
+          try {
+            const newPost = { ...payload.new };
+            const res = await getUserData(newPost.userId);
+
+            if (res.success) {
+              newPost.user = res.data;
+              newPost.postLikes = [];
+              newPost.comments = [{ count: 0 }];
+
+              // Update state only after getting user data
+              setPosts((prevPosts) => [newPost, ...prevPosts]);
+            } else {
+              console.warn("User data fetch failed, post not added");
+            }
+          } catch (error) {
+            console.error("Error fetching user data for new post:", error);
+          }
+          break;
+
+        case "DELETE":
+          if (!payload.old?.id) {
+            console.warn("Invalid DELETE payload: Missing old post ID");
+            return;
+          }
+
+          setPosts((prevPosts) =>
+            prevPosts.filter((post) => post.id !== payload.old.id)
+          );
+          break;
+
+        default:
+          console.warn("Unhandled event type:", payload.eventType);
+      }
+    } catch (error) {
+      console.error("Error handling post event:", error);
     }
   };
+
   useEffect(() => {
     let postChannel = supabase
       .channel("posts")
