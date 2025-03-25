@@ -27,6 +27,7 @@ const home = () => {
 
   const [posts, setPosts] = useState([]);
   const [hasMore, setHasMore] = useState(true);
+  const [notoficationCount, setNotificationCount] = useState(0);
 
   const handlePostEvent = async (payload) => {
     try {
@@ -135,6 +136,35 @@ const home = () => {
       supabase.removeChannel(postChannel);
     };
   }, []);
+
+  const handleNotfication = async (payload) => {
+    if (payload.eventType === "INSERT" && payload.new.id) {
+      setNotificationCount((prev) => prev + 1);
+    }
+
+    console.log("Notification payload:", payload);
+  };
+  useEffect(() => {
+    let notificationChannel = supabase
+      .channel("posts")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "notifications",
+          filter: `receiverId=eq.${user.id}`
+        },
+        handleNotfication
+      )
+      .subscribe();
+    console.log({ notificationChannel });
+    // getPosts();
+
+    return () => {
+      supabase.removeChannel(notificationChannel);
+    };
+  }, []);
   const getPosts = async () => {
     limit = limit + 5;
     let res = await fetchPosts(limit);
@@ -152,14 +182,19 @@ const home = () => {
           <Text style={styles.title}>ConnectHub</Text>
           <View style={styles.icons}>
             <Pressable onPress={() => router.push("notifications")}>
-              <Text>
                 <Icon
                   name={"heart"}
                   size={hp(3.2)}
                   strokeWidth={2}
                   color={theme.colors.text}
                 />
-              </Text>
+                {notoficationCount > 0 && (
+                  <>
+                    <View style={styles.pill}>
+                      <Text style={styles.pillText}>{notoficationCount}</Text>
+                    </View>
+                  </>
+                )}
             </Pressable>
             <Pressable onPress={() => router.push("newPost")}>
               <Text>
@@ -256,10 +291,21 @@ const styles = StyleSheet.create({
   pill: {
     position: "absolute",
     right: -10,
-    top: -4
+    top: -4,
+    backgroundColor: theme.colors.roseLight,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    width: hp(2.2),
+    height: hp(2.2)
   },
   listStyle: {
     paddingTop: 20,
     paddingHorizontal: wp(4)
+  },
+  pillText: {
+    color: "white",
+    fontSize: hp(1.2),
+    fontWeight: "bold"
   }
 });
